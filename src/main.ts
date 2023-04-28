@@ -13,7 +13,7 @@ async function main() {
 			name: String
 		}
 		type Query {
-			books: [Book]
+			books (criteria: String): [Book]
 		}
 	`;
 
@@ -26,10 +26,24 @@ async function main() {
 				name: "J.K. Rowling",
 			},
 		},
+		{
+			id: 2,
+			title: "Jurassic Park",
+			price: 300,
+			author: {
+				name: "Michael Crichton",
+			},
+		},
 	];
 
 	const resolvers = {
-		Query: { books: () => books },
+		Query: {
+			books(_: unknown, args: { criteria: string }) {
+				if (!args.criteria) return books;
+
+				return books.filter((book) => book.title.includes(args.criteria));
+			},
+		},
 	};
 
 	const server = new ApolloServer({ typeDefs, resolvers });
