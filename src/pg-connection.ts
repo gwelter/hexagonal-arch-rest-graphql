@@ -1,4 +1,4 @@
-import { load } from "https://deno.land/std/dotenv/mod.ts";
+import { load } from "https://deno.land/std@0.185.0/dotenv/mod.ts";
 import postgres from "https://deno.land/x/postgresjs@v3.3.4/mod.js";
 
 const env = await load();
@@ -14,8 +14,3 @@ const connection = `postgres://${username}:${password}@${host}:${port}/${databas
 console.log(connection);
 
 export const sql = postgres(connection);
-
-export async function getBooks() {
-  const bookData = await sql`select * from book`;
-  console.log(bookData);
-}

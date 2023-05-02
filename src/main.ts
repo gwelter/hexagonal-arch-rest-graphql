@@ -1,34 +1,35 @@
 import { ApolloServer } from "npm:@apollo/server";
 import { startStandaloneServer } from "npm:@apollo/server/standalone";
-import { getBooks } from "./pg-connection.ts";
-
-getBooks();
+import { sql } from "./pg-connection.ts";
 
 type Author = {
+  id_author: number;
   name: string;
 };
 
 type Book = {
-  id: number;
+  id_book: number;
   title: string;
   price: number;
-  author: Author;
+  authors: Author[];
 };
 type BookInput = {
+  id_book: number;
   title: string;
   price: number;
-  authorName: string;
+  id_author: number;
 };
 
 async function main() {
   const typeDefs = `
 		type Book {
-			id: Int,
+			id_book: Int,
 			title: String,
 			price: Int,
-			author: Author,
+			authors: [Author],
 		}
 		type Author {
+      id_author: Int,
 			name: String
 		}
 		
@@ -37,62 +38,51 @@ async function main() {
 		}
 		
 		input BookInput {
+      id_book: Int,
 			title: String,
 			price: Int,
-			authorName: String,	
+			id_author: Int,	
 		}
 		type Mutation {
 			saveBook (book: BookInput): Book
 		}
 	`;
 
-  const books = [
-    {
-      id: 1,
-      title: "Harry Potter and the Chamber of Secrets",
-      price: 200,
-      author: {
-        name: "J.K. Rowling",
-      },
-    },
-    {
-      id: 2,
-      title: "Jurassic Park",
-      price: 300,
-      author: {
-        name: "Michael Crichton",
-      },
-    },
-    {
-      id: 3,
-      title: "The Lord of the Rings",
-      price: 400,
-      author: {
-        name: "J.R.R. Tolkien",
-      },
-    },
-  ];
-
   const resolvers = {
     Query: {
-      books(_: unknown, args: { criteria: string }) {
-        if (!args.criteria) return books;
+      async books(_: unknown, args: { criteria: string }) {
+        const whereTitle = sql`where title like ${"%" + args.criteria + "%"}`;
+        const booksData = await sql`select * from book ${args.criteria ? whereTitle : sql``}`;
+        const books: Book[] = [];
 
-        return books.filter((book) => book.title.includes(args.criteria));
+        for (const book of booksData) {
+          const authorsData =
+            await sql`select * from author_book join author using (id_author) where id_book = ${book.id_book}`;
+          console.log({ authorsData });
+
+          const authors = [];
+          for (const author of authorsData) {
+            authors.push({
+              id_author: author.id_author,
+              name: author.name,
+            });
+          }
+          books.push({
+            id_book: book.id_book,
+            title: book.title,
+            price: book.price,
+            authors,
+          });
+        }
+
+        return books;
       },
     },
     Mutation: {
-      saveBook(_: unknown, args: { book: BookInput }): Book {
-        const book: Book = {
-          id: books.length + 1,
-          title: args.book.title,
-          price: args.book.price,
-          author: {
-            name: args.book.authorName,
-          },
-        };
-        books.push(book);
-        return book;
+      async saveBook(_: unknown, args: { book: BookInput }) {
+        const book = await sql`insert into book (id_book, title, price, id_author) values
+          (${args.book.id_book}, ${args.book.title}, ${+args.book.price}, ${+args.book.id_author}) returning *`;
+        return book[0];
       },
     },
   };
