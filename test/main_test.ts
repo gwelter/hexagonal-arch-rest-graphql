@@ -1,4 +1,4 @@
-import { assert, assertArrayIncludes, assertEquals } from "https://deno.land/std@0.184.0/testing/asserts.ts";
+import { assert, assertArrayIncludes } from "https://deno.land/std@0.184.0/testing/asserts.ts";
 
 Deno.test("Should test the presence of some arbitrary books", async function addTest() {
   const resp = await fetch("http://localhost:4000/graphql", {
@@ -44,7 +44,7 @@ Deno.test("Should fech a book by id", async function addTest() {
   assert(data.books[0].title, "Harry Potter and the Chamber of Secrets");
 });
 
-Deno.test("Should save a book", { ignore: true }, async function addTest() {
+Deno.test("Should save a book", async function addTest() {
   const resp = await fetch("http://localhost:4000/graphql", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -52,25 +52,21 @@ Deno.test("Should save a book", { ignore: true }, async function addTest() {
       query: `
 				mutation ($book: BookInput) {
 					saveBook (book: $book) {
-						id_book
 						title
 						price
-						author {
-							name
-						}
 					}
 				}
 			`,
       variables: {
         book: {
-          title: "The Lord of the Rings",
+          title: "Test Book",
           price: 100,
-          id_author: 1,
+          name_author: "Test author",
         },
       },
     }),
   });
   const { data } = await resp.json();
-  assert(data.saveBook.title === "The Lord of the Rings");
+  assert(data.saveBook.title === "Test Book");
   assert(data.saveBook.price === 100);
 });

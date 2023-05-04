@@ -14,10 +14,10 @@ type Book = {
   authors: Author[];
 };
 type BookInput = {
-  id_book: number;
   title: string;
   price: number;
-  id_author: number;
+  id_author?: number;
+  name_author?: string;
 };
 
 async function main() {
@@ -38,10 +38,10 @@ async function main() {
 		}
 		
 		input BookInput {
-      id_book: Int,
-			title: String,
+      title: String,
 			price: Int,
-			id_author: Int,	
+			id_author: Int,
+      name_author: String
 		}
 		type Mutation {
 			saveBook (book: BookInput): Book
@@ -58,7 +58,6 @@ async function main() {
         for (const book of booksData) {
           const authorsData =
             await sql`select * from author_book join author using (id_author) where id_book = ${book.id_book}`;
-          console.log({ authorsData });
 
           const authors = [];
           for (const author of authorsData) {
@@ -80,9 +79,28 @@ async function main() {
     },
     Mutation: {
       async saveBook(_: unknown, args: { book: BookInput }) {
-        const book = await sql`insert into book (id_book, title, price, id_author) values
-          (${args.book.id_book}, ${args.book.title}, ${+args.book.price}, ${+args.book.id_author}) returning *`;
-        return book[0];
+        let authorDatas = await sql`select * from author where id_author = ${args.book?.id_author || 0}`;
+        if (!authorDatas.length) {
+          authorDatas = await sql`insert into author (name) values (${
+            args.book.name_author || "Unknown Author"
+          }) returning *`;
+        }
+        const bookData =
+          await sql`insert into book (title, price) values(${args.book.title}, ${args.book.price}) returning *`;
+
+        await sql`insert into author_book (id_author, id_book) values (${authorDatas[0].id_author}, ${
+          bookData[0].id_book
+        })`;
+        const book: Book = {
+          id_book: bookData[0].id_book,
+          title: bookData[0].title,
+          price: bookData[0].price,
+          authors: authorDatas.map((authorData) => ({
+            id_author: authorData.id_author,
+            name: authorData.name,
+          })),
+        };
+        return book;
       },
     },
   };
