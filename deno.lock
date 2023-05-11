@@ -298,7 +298,7 @@
   },
   "npm": {
     "specifiers": {
-      "@apollo/server": "@apollo/server@4.7.0_graphql@16.6.0",
+      "@apollo/server": "@apollo/server@4.7.1_graphql@16.6.0",
       "@apollo/server@4.1": "@apollo/server@4.1.1_graphql@16.6.0",
       "@apollo/server@^4.1": "@apollo/server@4.7.0_graphql@16.6.0",
       "graphql@16.6": "graphql@16.6.0"
@@ -371,6 +371,38 @@
       },
       "@apollo/server@4.7.0_graphql@16.6.0": {
         "integrity": "sha512-qPfMnsHHA+U/F3dRAAlyiXWbTjM3U/KoMtS95OrfYKWXbeenW9R82nZISrI3D0cBIYICigZC3DrQVl9M5mYA+g==",
+        "dependencies": {
+          "@apollo/cache-control-types": "@apollo/cache-control-types@1.0.2_graphql@16.6.0",
+          "@apollo/server-gateway-interface": "@apollo/server-gateway-interface@1.1.0_graphql@16.6.0",
+          "@apollo/usage-reporting-protobuf": "@apollo/usage-reporting-protobuf@4.1.0",
+          "@apollo/utils.createhash": "@apollo/utils.createhash@2.0.1",
+          "@apollo/utils.fetcher": "@apollo/utils.fetcher@2.0.1",
+          "@apollo/utils.isnodelike": "@apollo/utils.isnodelike@2.0.1",
+          "@apollo/utils.keyvaluecache": "@apollo/utils.keyvaluecache@2.1.1",
+          "@apollo/utils.logger": "@apollo/utils.logger@2.0.1",
+          "@apollo/utils.usagereporting": "@apollo/utils.usagereporting@2.0.1_graphql@16.6.0",
+          "@apollo/utils.withrequired": "@apollo/utils.withrequired@2.0.1",
+          "@graphql-tools/schema": "@graphql-tools/schema@9.0.19_graphql@16.6.0",
+          "@josephg/resolvable": "@josephg/resolvable@1.0.1",
+          "@types/express": "@types/express@4.17.17",
+          "@types/express-serve-static-core": "@types/express-serve-static-core@4.17.34",
+          "@types/node-fetch": "@types/node-fetch@2.6.3",
+          "async-retry": "async-retry@1.3.3",
+          "body-parser": "body-parser@1.20.2",
+          "cors": "cors@2.8.5",
+          "express": "express@4.18.2",
+          "graphql": "graphql@16.6.0",
+          "loglevel": "loglevel@1.8.1",
+          "lru-cache": "lru-cache@7.18.3",
+          "negotiator": "negotiator@0.6.3",
+          "node-abort-controller": "node-abort-controller@3.1.1",
+          "node-fetch": "node-fetch@2.6.9",
+          "uuid": "uuid@9.0.0",
+          "whatwg-mimetype": "whatwg-mimetype@3.0.0"
+        }
+      },
+      "@apollo/server@4.7.1_graphql@16.6.0": {
+        "integrity": "sha512-rFxd8jsMlqEYzmhuxATaDAPoRH905R56FKP4TnZWaiDYJtjhHe3hxZOWl24V7s0dB52DIp6S/x+zjQX8fwD37w==",
         "dependencies": {
           "@apollo/cache-control-types": "@apollo/cache-control-types@1.0.2_graphql@16.6.0",
           "@apollo/server-gateway-interface": "@apollo/server-gateway-interface@1.1.0_graphql@16.6.0",
