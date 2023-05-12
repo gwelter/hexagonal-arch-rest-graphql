@@ -1,42 +1,11 @@
-import { connect } from "../pg-connection.ts";
+import Book from "../domain/entities/Book.ts";
+import BookRepository from "../domain/repository/BookRepository.ts";
 
 export default class SeachBooks {
-  async execute(criteria: string): Promise<Output[]> {
-    const sql = await connect();
-    const whereTitle = sql`where title like ${"%" + criteria + "%"}`;
-    const booksData = await sql`select * from book ${criteria ? whereTitle : sql``}`;
-    const books: Output[] = [];
+  constructor(readonly booksRepositoryDatabase: BookRepository) {}
 
-    for (const book of booksData) {
-      const authorsData =
-        await sql`select * from author_book join author using (id_author) where id_book = ${book.id_book}`;
-
-      const authors = [];
-      for (const author of authorsData) {
-        authors.push({
-          id_author: author.id_author,
-          name: author.name,
-        });
-      }
-      books.push({
-        id_book: book.id_book,
-        title: book.title,
-        price: book.price,
-        authors,
-      });
-    }
-    await sql.end();
-
+  async execute(criteria: string): Promise<Book[]> {
+    const books = await this.booksRepositoryDatabase.search(criteria);
     return books;
   }
 }
-
-type Output = {
-  id_book: number;
-  title: string;
-  price: number;
-  authors: {
-    id_author: number;
-    name: string;
-  }[];
-};

@@ -17,8 +17,8 @@ Deno.test("Should test the presence of some arbitrary books", async () => {
   });
   const { data } = await resp.json();
   assertArrayIncludes(data.books, [
-    { id_book: 1, title: "Harry Potter and the Philosopher's Stone" },
-    { id_book: 2, title: "Harry Potter and the Chamber of Secrets" },
+    { id_book: "1", title: "Harry Potter and the Philosopher's Stone" },
+    { id_book: "2", title: "Harry Potter and the Chamber of Secrets" },
   ]);
 });
 
