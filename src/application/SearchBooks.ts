@@ -1,7 +1,8 @@
-import { sql } from "../pg-connection.ts";
+import { connect } from "../pg-connection.ts";
 
 export default class SeachBooks {
   async execute(criteria: string): Promise<Output[]> {
+    const sql = await connect();
     const whereTitle = sql`where title like ${"%" + criteria + "%"}`;
     const booksData = await sql`select * from book ${criteria ? whereTitle : sql``}`;
     const books: Output[] = [];
@@ -24,6 +25,7 @@ export default class SeachBooks {
         authors,
       });
     }
+    await sql.end();
 
     return books;
   }

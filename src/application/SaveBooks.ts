@@ -1,7 +1,8 @@
-import { sql } from "../pg-connection.ts";
+import { connect } from "../pg-connection.ts";
 
 export default class SaveBooks {
   async execute(input: Input): Promise<Output> {
+    const sql = await connect();
     let authorDatas = await sql`select * from author where id_author = ${input?.id_author || 0}`;
     if (!authorDatas.length) {
       authorDatas = await sql`insert into author (name) values (${input.name_author || "Unknown Author"}) returning *`;
@@ -20,6 +21,8 @@ export default class SaveBooks {
         name: authorData.name,
       })),
     };
+
+    await sql.end();
 
     return book;
   }

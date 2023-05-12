@@ -11,6 +11,7 @@ const host = "localhost";
 const port = "15432";
 
 const connection = `postgres://${username}:${password}@${host}:${port}/${database}`;
-console.log(connection);
 
-export const sql = postgres(connection);
+export function connect() {
+  return postgres(connection);
+}
